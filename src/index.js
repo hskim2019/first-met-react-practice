@@ -4,10 +4,35 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+// import Library from './chapter_03/Library';
+
+// // react ver.18 부터는 ReactDom.render 대신 createRoot를 사용하는 방식으로 변경됨
+//  const root = ReactDOM.createRoot(document.getElementById('root')); 
+//   root.render( 
+//     <React.StrictMode>
+//       {/* <App /> */}
+//       <Library />
+//     </React.StrictMode>
+//   );
+
+
+// import Clock from './chapter_04/Clock';
+
+// setInterval(() => {
+//   const root = ReactDOM.createRoot(document.getElementById('root')); 
+//   root.render(
+//     <React.StrictMode>
+//       <Clock />
+//     </React.StrictMode>
+//   )
+// }, 1000);
+
+import CommentList from './chapter_05/CommentList';
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <CommentList />
   </React.StrictMode>
 );
 
