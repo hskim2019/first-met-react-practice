@@ -389,3 +389,4 @@ this.setState({
 - Mounting : 컴포넌트의 생성자가 실행되고 생성자에서는 컴포넌트의 state 를 정의, 컴포넌트가 렌더링되며 이후에 componentDidMount 함수가 호출된다
 - Updating : state 가 변경되거나 falseUpdate 라는 강제 업데이트 함수 호출로 인해 컴포넌트가 다시 렌더링
 - Unmounting : 상위 컴포넌트에서 현재 컴포넌트를 더 이상 화면에 표시하지 않게 될 때 Unmount 발생하며 Unmount 직전에 componentWillUnmount 함수가 호출된다
+<img src="./images/Screen-Shot-2018-10-31-at-1.44.28-PM.webp" style="width:870px;"/>
