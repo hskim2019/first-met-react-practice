@@ -342,11 +342,21 @@ React.createElement(
 )
 ```
 
-- Component 종류
-    - Function Component 함수 컴포넌트와 Class Component 클래스 컴포넌트로 나뉜다
+## Component 종류
+- Function Component 함수 컴포넌트와 Class Component 클래스 컴포넌트로 나뉜다
 
--  Class Component
-    -  리액트의 모든 클래스 컴포넌트는 React.Component 를 상속받아서 만든다.
+- Class Component
+    - 리액트의 모든 클래스 컴포넌트는 React.Component 를 상속받아서 만든다.
+
+</br>
+
+  |**<center>Function Component</center>**|**<center>Class Component</center>**|
+  |:---|:---|
+  |state 사용 불가| 생성자에서 state를 정의|
+  |Lifecycle에 따른 기능 구현 불가| setState() 함수를 통해 state 업데이트 |
+  |**Hooks** 을 사용하여 클래스 컴포넌트 기능 구현|Lifecycle methods 제공|
+
+
 ```javascript
 class Welcome extends React.Component {
     render() {
@@ -390,3 +400,180 @@ this.setState({
 - Updating : state 가 변경되거나 falseUpdate 라는 강제 업데이트 함수 호출로 인해 컴포넌트가 다시 렌더링
 - Unmounting : 상위 컴포넌트에서 현재 컴포넌트를 더 이상 화면에 표시하지 않게 될 때 Unmount 발생하며 Unmount 직전에 componentWillUnmount 함수가 호출된다
 <img src="./images/Screen-Shot-2018-10-31-at-1.44.28-PM.webp" style="width:870px;"/>
+
+
+# Hook
+- chapter_07 참고
+Hook 을 사용하면 함수 컴포넌트에서도 클래스 컴포넌트와 같은 기능을 구현 할 수 있다
+ |**<center>Function Component</center>**|**<center>Class Component</center>**|
+  |:---|:---|
+  |state 사용 불가| 생성자에서 state를 정의|
+  |Lifecycle에 따른 기능 구현 불가| setState() 함수를 통해 state 업데이트 |
+  |**Hooks** 을 사용하여 클래스 컴포넌트 기능 구현|Lifecycle methods 제공|
+
+Hook 의 이름은 모두 use로 시작
+
+## useState()
+- 대표적이고 가장 많이 사용되는 Hook
+- state 를 사용하기 위한 hook
+```javascript
+const [변수명, set함수명] = useState(초기값);
+```
+```javascript
+import React, {useState} from "react";
+function Counter(props) {
+    // 클래스 컴포넌트에서는 setState 함수 하나를 사용해서 모든 state 값을 업데이트 할 수 있었지만
+    // useState 를 사용하는 방법에서는 변수 각각에 대해 set함수가 따로 존재한다.
+    const [count, setCount] = useState(0);
+
+    return (
+        <div>
+            <p>총 {count}번 클릭했습니다.</p>
+            <button onClick={() => setCount(count + 1)}>
+                클릭
+            </button>
+        </div>
+    );
+}
+```
+
+## useEffect()
+- 사이드 이펙트를 수행하기 위한 훅
+- 사이드 이펙트 : 서버에서 데이터를 받아오거나 수동으로 DOM 을 변경하는 작업 등 다른 컴포넌트에 영향을 미칠 수 있는 작업으로 렌더링 중 작업이 완료될 수 없고 렌더링 끝난 이후에 실행되어야 함. 이러한 작업이 사이드로 실행된다는 의미에서 사이드 이펙트라고 불리며 
+- useEffect는 함수 컴포넌트에서 사이드 이펙트를 실행할 수 있게 해주는 훅
+- 클래스 컴포넌트에서 제공하는 생명 주기 함수인 componentDidMount, componentDidUpdate, componentWillUnmount 와 동일한 기능을 하나로 통합해서 제공
+```javascript
+// 의존성 배열 - 이 이펙트가 의존하고 있는 배열
+//            - 배열 안에 있는 변수 중 하나라도 값이 변경되었을 때 이펙트 함수가 실행된다
+useEffect(이펙트 함수, 의존성 배열);
+```
+- 기본적으로 처음 컴포넌트가 렌더링 된 이후와 업데이트로 인한 재렌더링 이후 실행
+```javascript
+// 만약 이펙트함수가 mount 와 unmount시에 단 한번씩만 실행되게 하고 싶으면 의존성 배열에 빈 배열을 넣는다
+useEffect(이펙트 함수, []);
+```
+```javascript
+// 의존성 배열을 생략하면 컴포넌트가 업데이트될 때마다 호출 됨
+useEffect(이펙트 함수);
+```
+- 예제
+```javascript
+import React, {useState, useEffect} from "react";
+
+function Counter(props) {
+    const [count, setCount] = useState(0);
+
+    // componentDidMoount, componentDidUpdate와 비슷하게 작동합니다.
+    useEffect(() => {    
+        // 의존성 배열을 생략했기 때문에 함수가 처음 컴포넌트에 마운트 되었을 때 실행되고 이후 컴포넌트가 업데이트 될 때마다 실행된다
+        // 함수 컴포넌트 안에서 선언되기 때문에 해당 컴포넌트의 props와 state 에 접근할 수도 있다
+
+        // 브라우저 API를 사용해서 document의 title을 업데이트 합니다.
+        document.title = `You clicked ${count} times`;
+    });
+
+    return (
+        <div>
+            <p>총 {count}번 클릭했습니다.</p>
+            <button onClick={() =? setCount(count + 1)}>
+                클릭
+            </button>
+        </div>
+    );
+}
+```
+
+```javascript
+useEffect(() => {
+    // 컴포넌트가 마운트 된 이후,
+    // 의존성 배열에 있는 변수들 중 하나라도 값이 변경되었을 때 실행됨
+    // 의존성 배열에 빈 배열([])을 넣으면 마운트와 언마운트시에 단 한 번씩만 실행됨
+    // 의존성 배열 생략 시 컴포넌트 업데이트 시마다 실행됨
+
+    return () => {
+        // 컴포넌트가 마운트 해제되기 전에 실행됨
+        ...
+    }
+}, [의존성 변수1, 의존성 변수2, ...]);
+```
+
+## useMemo()
+- memoized value 를 리턴하는 훅
+- memoization : 비용이 높은, 연산량이 많이 드는 함수의 호출 결과를 저장해 두었다가 같은 입력 값으로 함수를 호출하면 새로 함수를 호출하지 않고 이전에 저장해 놓았던 호출 결과를 바로 반환. 메모이제이션 된 결과 값을 Memoized Value 라고 부른다
+- useMemo 훅을 사용하면 컴포넌트가 다시 렌더링 될 때마다 연산량이 높은 작업을 반복하는 것을 필할 수 있다
+- 빠른 렌더링 속도를 얻을 수 있게 한다
+
+```javascript
+// 의존성 배열에 들어있는 변수가 변했을 경우에만 새로 create함수를 노출하여 결과값을 반환
+const memoizedValue = useMemo(
+    () => {
+        // 연산량이 높은 작업을 수행하여 결과를 반환
+        return computeExpensiveValue(의존성 변수1, 의존성 변수2);
+    },
+    [의존성 변수1, 의존성 변수2]
+);
+```
+- useMemo로 전달된 함수는 렌더링이 일어나는 동안 실행된다
+- 따라서 렌더링이 일어나는 동안 실행되어서는 안 될 작업을 useMemo의 함수에 넣으면 안 됨
+
+```javascript
+// 의존성 배열을 넣지 않을 경우, 매 렌더링마다 함수가 실행되고
+// 배열을 넣지 않고 useMemo 훅을 사용하는 것은 의미가 없다
+const memoizedValue = useMemo(
+    () => computeExpensiveValue(a, b)
+);
+```
+
+```javascript
+// 의존성 배열이 빈 배열일 경우, 컴포넌트 마운트 시에만 호출된다.
+// 마운트 이후에 값이 변경되지 않으므로 마운트 시점에만 한 번 값을 계산할 필요가 있을 경우에 이렇게 사용
+const memoizedValue = useMemo(
+    () => {
+        return computeExpensiveValue(a, b);
+    },
+    []
+);
+```
+
+## useCallback()
+- useMemo() Hook 과 유사하지만 값이 아닌 함수를 반환
+- 컴포넌트가 렌더링 될 때마다 매번 함수를 새로 정의하는 것이 아니라 의존성 배열의 값이 바뀐 경우에만 함수를 새로 정의해서 리턴해준다.
+
+```javascript
+// 의존성 배열에 있는 변수 중 하나라도 변경되면 메모이제이션된 콜백 함수를 반환한다 
+const memoizedCallback = useCallback(
+    () => {
+        doSomething(의존성 변수1, 의존성 변수2);
+    },
+    [의존성 변수1, 의존성 변수2]
+);
+```
+
+## useRef()
+- Reference를 사용하기 위한 Hook
+- React 에서 레퍼런스란 특정 컴포넌트에 접근할 수 있는 객체를 의미하며 useRef() 는 이 레퍼런스 객체를 반환한다
+- refObject.current : 레퍼런스 객체에는 current 라는 속성이 있는데, 이것은 현재 레퍼런스하고 있는 엘리먼트를 의미
+- useRef() Hook 은 내부의 데이터가 변경되었을 때 별도로 알리지 않는다. 
+ - current 속성을 변경한다고 해서 재렌더링이 일어나지 않는다 따라서 변화를 알기 위해서는 Callback ref 를 사용
+ - React 는 ref 가 다른 노드에 연결될 때마다 callback을 호출
+```javascript
+// 파라미터로 초기값을 넣으면 해당 초기값으로 초기화된 레퍼런스 객체를 반환한다
+// 반환된 레퍼런스 객체는 컴포넌트의 라이프타임 전체에 걸쳐서 유지된다
+const refContaier = useRef(초기값);
+```
+
+## Hook의 규칙
+- Hook 은 무조건 최상위 레벨에서만 호출해야 한다.
+    - 반복문이나 조건문 도는 중첩된 함수들 안에서 Hook을 호출하면 안 된다.
+    - Hook 은 컴포넌트가 렌더링될 때마다 매번 같은 순서로 호출되어야 한다.
+
+- React 함수 컴포넌트에서만 Hook을 호출해야 한다.
+    - React 함수 컴포넌트에서 호출하거나 직접 만든 커스텀 Hook 에서만 호출
+
+- Hook 의 규칙을 강제로 따르게 해주는 플러그인
+    - eslint-plugin-react-hooks
+ 
+## Custom Hook 
+- custom hook 을 만들어야 하는 상황
+ - 두 개의 자바스크립트 함수에서 하나의 로직을 공유하도록 하고 싶을 때
+- 이름이 use로 시작하고, 내부에서 다른 Hook을 호출하는 하나의 자바스크립트 함수

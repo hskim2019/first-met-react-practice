@@ -27,6 +27,7 @@ import reportWebVitals from './reportWebVitals';
 //   )
 // }, 1000);
 
+
 // import CommentList from './chapter_05/CommentList';
 
 // const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -36,19 +37,27 @@ import reportWebVitals from './reportWebVitals';
 //   </React.StrictMode>
 // );
 
-import NotificationList from './chapter_06/NotificationList';
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
 
-      <NotificationList />
+// import NotificationList from './chapter_06/NotificationList';
+// const root = ReactDOM.createRoot(document.getElementById('root'));
+// root.render(
+
+//       <NotificationList />
   
-);
+// );
 // 참고 - https://www.inflearn.com/questions/619705/notificationlist-jsx-%EC%B1%95%ED%84%B0-6%EC%9E%A5-%EC%8B%A4%EC%8A%B5-%EB%82%B4%EC%9A%A9-%EC%A7%88%EB%AC%B8-%EB%8F%99%EC%8B%9C%EC%97%90-2%EA%B0%9C%EC%94%A9-%EB%82%98%EC%98%B4?commentId=205023#205023
 // 리액트 버전 18에서 Strict Mode 동작이 변경되어, 실행 시 알림 메세지가 두 번 나오는 현상이 있어 Strict Mode 라인을 삭제 해서 실행 해 봄
 // React would unmount and remount trees using the same component state as before - 개발 모드에서 Strict Mode 를 사용하면 컴포넌트를 unmount 시켰다가 다시 remount 하게 되어
 // 예제의 componentDidMount() 함수가 두 번 호출되게 됨
 
+import Accmodate from './chapter_07/Accomodate';
 
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+      <React.StrictMode>
+            <Accmodate />
+      </React.StrictMode>
+);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
