@@ -577,3 +577,162 @@ const refContaier = useRef(초기값);
 - custom hook 을 만들어야 하는 상황
  - 두 개의 자바스크립트 함수에서 하나의 로직을 공유하도록 하고 싶을 때
 - 이름이 use로 시작하고, 내부에서 다른 Hook을 호출하는 하나의 자바스크립트 함수
+
+# Handiling Events
+- chapter_08 참고
+- 이벤트 핸들링 예
+
+```javascript
+
+// toggle 이라는 클래스 컴포넌트
+class Toggle extends React.Component {
+    constructor(props) {
+        super(props);
+
+        // 이 컴포넌트의 state에 isToggleOn 이라는 변수
+        this.state = {isToggleOn : true };
+
+        // callback 에서 `this` 를 사용하기 위해서는 (constructor에서) 바인딩을 필수적으로 해주어야 한다
+        // 바인드를 하는 이유는 자바스크립트에서는 기본적으로 클래스 함수들이 바운드되지 않고
+        // 바인드 하지 않으면 this.handleClick 은 글로벌 스코프에서 호출됨, 글로벌스코프에서 this.handleClick 은 undefined이므로 사용할 수 없음
+        this.handleClick = this.handleClick.bind(this);
+
+    }
+
+    handleClick() {
+        this.setState(pervState => ({
+            isToggleOn: !prevState.isToggleOn
+        }));
+    }
+
+    render() {
+        return ( // 버튼을 클릭하면 이벤트 핸들러 함수인 handleClick 함수 호출
+            <button onClick={this.handleClick}>
+                {this.state.isToggleOn ? '켜짐' : '꺼짐'}
+            </button>
+        );
+    }
+}
+```
+
+```javascript
+// 바인드를 사용하지 않으려면 Class fields syntax 사용
+class MyButton extends React.Component {
+    handleClick = () => {
+        console.log('this is:', this);
+    }
+
+    render() {
+        return (
+            <button onClick={this.handleClick}>
+                클릭
+            </button>
+        )
+    }
+}
+
+// class fields 문법을 사용하지 않으려면 이벤트 핸들러 넣는 곳에 arrow function 사용
+// 이 방식은 컴포넌트가 렌더링 될 때마다 다른 콜백 함수가 생성되는 문제가 있으므로
+// 바인딩이나 class fileds syntax 방식을 사용하는 것이 낫다.
+class MyButton extends React.Component {
+    handleClick() {
+        console.log('this is:', this);
+    }
+
+    render() {
+        // 이렇게 하면 `this`가 바운드된다
+        return (
+            <button onClick={() => this.handleClick()}>
+                클릭
+            </button>
+        );
+    }
+}
+```
+
+```javascript
+// 함수 컴포넌트 사용하려면
+function Toggle(props) {
+    const [isToggleOn, setIsToggleOn] = useState(true);
+
+    // 방법 1. 함수 안에 함수로 정의
+    function handleClick() {
+        setIsToggleOn((isToggleOn) => !isToggleOn);
+    }
+
+    // 방법 2. arrow function 을 사용하여 정의
+    const handleClick = () => {
+        setIsToggleOn((isToggleOn) => !isToggleOn);
+    }
+
+    return (
+        <button onClick={handleClick}>
+            {isToggleOn ? "켜짐" : "꺼짐"}
+        </button>
+    );
+}
+```
+
+## Arguments 전달하기
+```javascript
+// event 매게변수는 리액트의 이벤트 객체를 의미
+<button onClick={(event) => this.deleteItem(id, event)}>삭제하기</button>
+
+// id 이후에 자동으로 event 가 두번째 매게변수로 전달되는데 이 방식은 클래스 컴포넌트에서 사용하는 방식으로 지금은 거의 사용하지 않음
+<button onClick={this.deleteItem.bind(this, id)}>삭제하기</button>
+```
+
+```javascript
+// 함수 컴포넌트에서 이벤트 핸들러에 매개변수 전달하는 방법
+function MyButton(props) {
+    const handleDelete = (id, event) => {
+        console.log(id, event.target);
+    }
+
+    return (
+        <button onClick={(event) => handleDelete(1, event)}>
+            삭제하기
+        </button>
+    )
+}
+```
+
+# Conditional Rendering
+- chapter_09 참고 : 로그인 여부를 나타내는 툴바 만들기
+## Element Variable
+```javascript
+// Element Variable : element 를 변수처럼 저장해서 사용하는 방법
+function LoginControl(props) {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    const handleLoginClick = () => {
+        setIsLoggedIn(true);
+    }
+
+    const handleLogoutClick = () => {
+        setIsLoggedIn(false);
+    }
+
+    // button element 를 변수처럼 저장해서 사용
+    // 인라인 조건문을 사용하면 더 간결하게 작성할 수 있다
+    let button;
+    if(isLoggedIn) {
+        button = <LogoutButton onClick={handleLogoutClick} />;
+    } else {
+        button = <LoginButton onClick={handleLoginClick} />;
+    }
+
+    return (
+        <div>
+            <Greeting isLoggedIn={isLoggedIn} />
+            {button} // button element 를 변수처럼 저장해서 사용
+        </div>
+    )
+}
+```
+
+## Inline Conditions 인라인 조건문
+## Component 렌더링 막기
+- null 을 리턴하면 렌더링되지 않는다
+- 클래스 컴포넌트의 렌더 함수에서 null을 리턴하는 것은 컴포넌트 생명주기 함수에 영향을 미치지 않는다.
+    - 예를 들면 componentDidUpdate 함수는 여전히 호출된다.

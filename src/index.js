@@ -50,12 +50,36 @@ import reportWebVitals from './reportWebVitals';
 // React would unmount and remount trees using the same component state as before - 개발 모드에서 Strict Mode 를 사용하면 컴포넌트를 unmount 시켰다가 다시 remount 하게 되어
 // 예제의 componentDidMount() 함수가 두 번 호출되게 됨
 
-import Accmodate from './chapter_07/Accomodate';
 
+
+// import Accmodate from './chapter_07/Accomodate';
+
+// const root = ReactDOM.createRoot(document.getElementById('root'));
+// root.render(
+//       <React.StrictMode>
+//             <Accmodate />
+//       </React.StrictMode>
+// );
+
+
+
+// import ConfirmButton from './chapter_08/ConfirmButton';
+// import ConfirmButtonClassFields from './chapter_08/ConfirmButtonClassFields';
+// import ConfirmButtonFunction from './chapter_08/ConfirmButtonFunction';
+// const root = ReactDOM.createRoot(document.getElementById('root'));
+// root.render(
+//       <React.StrictMode>
+//             {/* <ConfirmButton/> */}
+//             {/* <ConfirmButtonClassFields/> */}
+//             <ConfirmButtonFunction/>
+//       </React.StrictMode>
+// );
+
+import LandingPage from './chapter_09/LandingPage';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
       <React.StrictMode>
-            <Accmodate />
+            <LandingPage/>
       </React.StrictMode>
 );
 
