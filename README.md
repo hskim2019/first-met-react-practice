@@ -469,7 +469,8 @@ function Counter(props) {
         // 함수 컴포넌트 안에서 선언되기 때문에 해당 컴포넌트의 props와 state 에 접근할 수도 있다
 
         // 브라우저 API를 사용해서 document의 title을 업데이트 합니다.
-        document.title = `You clicked ${count} times`;
+        document.title = `You clicked ${count} times`; 
+        // `: Backquote, backtick, grave accent
     });
 
     return (
@@ -736,3 +737,53 @@ function LoginControl(props) {
 - null 을 리턴하면 렌더링되지 않는다
 - 클래스 컴포넌트의 렌더 함수에서 null을 리턴하는 것은 컴포넌트 생명주기 함수에 영향을 미치지 않는다.
     - 예를 들면 componentDidUpdate 함수는 여전히 호출된다.
+
+# Lists and Keys
+- chapter_10 참고 (출석부 출력하기)
+```javascript
+// 이 코드를 실행하면 개발자 도구 콘솔 탭에
+// Warning: Each child in a list sould have a unique "key" prop. 
+// 과 같은 경고 문구가 나타난다.
+// 리스트의 각 아이템은 무조건 고유한 키를 가지고 있어야 하는데 키가 없는 상태라서
+function NumberList(props) {
+    const { numbers } = props;
+
+    const listItems = numbers.map((number) => 
+        <li>{number}</li>
+    );
+
+    return (
+        <ul>{listItems}</ul>
+    );
+}
+
+const numbers = [1, 2, 3, 4, 5];
+ReactDOM.render(
+    <NumberList numbers={numbers}/>,
+    document.getElementById('root')
+);
+```
+
+```javascript
+const todoItems = todos.map((todo) =>
+    <li key={todo.id}>
+        {todo.text}
+    </li>
+);
+
+const todoItems = todos.map((todo, index) =>
+    // map 함수에서 두번째 파라미터로 제공해주는 index 값을 key 로 사용하는 예
+    // 아이템들의 고유한 ID가 없을 경우에만 사용해야 함
+    // 리액트에서는 키를 명시적으로 넣어주지 않으면 기본적으로 인덱스 값을 키값으로 사용
+    <li key={index}>
+        {todo.text}
+    </li>
+);
+```
+
+# Forms
+- chapter_11 참고(사용자 정보 입력 받기)
+
+# Controlled Component
+- 그 값이 React의 통제를 받는 input form element 를 의미
+- Controlled Component 를 사용하면 사용자의 입력을 직접적으로 제어할 수 있음

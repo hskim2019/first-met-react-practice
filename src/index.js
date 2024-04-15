@@ -75,13 +75,33 @@ import reportWebVitals from './reportWebVitals';
 //       </React.StrictMode>
 // );
 
-import LandingPage from './chapter_09/LandingPage';
+
+
+// import LandingPage from './chapter_09/LandingPage';
+// const root = ReactDOM.createRoot(document.getElementById('root'));
+// root.render(
+//       <React.StrictMode>
+//             <LandingPage/>
+//       </React.StrictMode>
+// );
+
+
+
+// import AttendanceBook from './chapter_10/AttendanceBook';
+// const root = ReactDOM.createRoot(document.getElementById('root'));
+// root.render(
+//       <React.StrictMode>
+//             <AttendanceBook/>
+//       </React.StrictMode>
+// )
+
+import SignUp from './chapter_11/SignUp';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
       <React.StrictMode>
-            <LandingPage/>
+            <SignUp/>
       </React.StrictMode>
-);
+)
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
