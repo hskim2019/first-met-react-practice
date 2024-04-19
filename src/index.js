@@ -95,11 +95,40 @@ import reportWebVitals from './reportWebVitals';
 //       </React.StrictMode>
 // )
 
-import SignUp from './chapter_11/SignUp';
+
+
+// import SignUp from './chapter_11/SignUp';
+// const root = ReactDOM.createRoot(document.getElementById('root'));
+// root.render(
+//       <React.StrictMode>
+//             <SignUp/>
+//       </React.StrictMode>
+// )
+
+
+// import Calculator from './chapter_12/Calculator';
+// const root = ReactDOM.createRoot(document.getElementById('root'));
+// root.render(
+//       <React.StrictMode>
+//             <Calculator/>
+//       </React.StrictMode>
+// )
+
+
+// import ProfileCard from "./chapter_13/ProfileCard";
+// const root = ReactDOM.createRoot(document.getElementById('root'));
+// root.render(
+//       <React.StrictMode>
+//             <ProfileCard/>
+//       </React.StrictMode>
+// )
+
+
+import DarkOrLight from './chapter_14/DarkOrLight';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
       <React.StrictMode>
-            <SignUp/>
+            <DarkOrLight />
       </React.StrictMode>
 )
 

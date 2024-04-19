@@ -782,8 +782,528 @@ const todoItems = todos.map((todo, index) =>
 ```
 
 # Forms
-- chapter_11 참고(사용자 정보 입력 받기)
+- chapter_11 참고 (사용자 정보 입력 받기)
 
-# Controlled Component
+## Controlled Component
 - 그 값이 React의 통제를 받는 input form element 를 의미
 - Controlled Component 를 사용하면 사용자의 입력을 직접적으로 제어할 수 있음
+
+# Lifiting State Up
+- chapter_12 참고 (섭씨온도와 화씨온도 표시하기)
+Shared State
+- 하나의 데이터를 여러 개의 컴포넌트에서 표현해야 하는 경우 각 컴포넌트의 state 에서 데이터를 각각 보관하는 것이 아니라 가장 가까운 공통된 부모 컴포넌트의 state를 공유해서 사용하는 것이 효율적이다
+- State에 있는 데이터를 여러 개의 하위 컴포넌트에서 공통적으로 사용하는 경우
+
+# Composition vs Inheritance
+- chapter_13 참고 (Card 컴포넌트 만들기)
+## Composition
+조합 방법에 따라 컴포지션의 사용 기법이 나뉘는데 대표적인 컴포지션의 기법은 다음과 같다
+- Containment
+    - 하위 컴포넌트를 포함하는 형태의 합성 방법
+    - props.children 이나 직접 정의한 props 를 이용하여 하위 컴포넌트를 포함하는 형태로 합성하는 것
+
+```javascript
+function FancyBorder(props) {
+    return (
+        <div className={'FancyBorder FancyBorder-' + props.color}>
+             {/* props.children 을 사용하면 해당 컴포넌트의 하위 컴포넌트가 모두 children 으로 들어온다. 
+                 children 이라는 prop 은 개발자가 직접 넣어주는 것이 아닌 React 에서 기본적으로 제공*/}
+            {props.children}
+        </div>
+    );
+
+    // CreateElement 함수에서 세 번째에 들어가는 파라미터가 Children
+    // Children 이 배열로 되어 있는 이유는 여러 개의 하위 컴포넌트를 가질 수 있기 때문
+    // React.createElement(
+    //     type,
+    //     [props],
+    //     [...children]
+    // );
+}
+```
+
+```javascript
+// FancyBorder 컴포넌트 안에 있는 모든 JSX 태그는 children 으로 전달된다.
+// h1, p 태그는 FancyBorder 컴포넌트에 children 이라는 이름의 props로 전달된다.
+function WelcomeDialog(props) {
+    return (
+        <FancyBorder color="blue">
+            <h1 className="Dialog-title">
+                어서오세요
+            </h1>
+            <p className="Dialog-message">
+                우리 사이트에 방문하신 것을 환영합니다!
+            </p>
+        </FancyBorder>
+    );
+}
+```
+
+```javascript
+// 여러 개의 children 집합이 필요한 경우 - 별도로 props 를 정의해서 각각 원하는 컴포넌트를 넣어준다
+function SplitPane(props) {
+    return (
+        <div className="SplitPane">
+            <div className="SplitPane-left">
+                {props.left}
+            </div>
+            <div className="SplitPane-right">
+                {props.right}
+            </div>
+        </div>
+    );
+}
+
+function App(props) {
+    return (
+        <SplitPane 
+            left={
+                <Contacts />
+            }
+            right={
+                <Chat />
+            }
+        />
+    );
+}
+```
+
+## Specialization
+- 범용적인 개념을 구별이 되게 구체화 하는 것
+- 범용적으로 사용할 수 있는 컴포넌트를 만들어놓고 이를 특수화 시켜서 컴포넌트를 사용하는 컴포지션 방볍
+
+```javascript
+// 범용적인 의미를 가진 컴포넌트
+// 제목과 메세지를 어떻게 사용하느냐에 따라서 경고 다이얼로그가 될 수도 있고 인사말 다이얼로그가 될 수 있다
+function Dialog(props) {
+    return (
+        <FancyBorder color="blue">
+            <h1 className="Dialog-title">
+                {props.title}
+            </h1>
+            <p className="Dialog-message">
+                {props.message}
+            </p>
+        </FancyBorder>
+    );
+}
+// 범용적으로 사용할 수 있는 컴포넌트를 만들어놓고 이를 특수화 시켜서 컴포넌트를 사용하는 컴포지션 방법
+function WelcomeDialog(props) {
+    return (
+        <Dialog
+            title="어서 오세요"
+            message="우리 사이트에 방문하신 것을 환영합니다!"
+            />
+    );
+}
+```
+
+- Containment 와 Specialization 을 같이 사용하기
+    - Contaiment를 위해서 props.children 을 사용하고 스페셜랴이제이션을 위해 직접 정의한 props 를 사용
+```javascript
+function Dialog(props) {
+    return (
+        <FancyBorder color="blue">
+            <h1 className="Dialog-title">
+                {props.title}
+            </h1>
+            <p className="Dialog-message">
+                {props.message}
+            </p>
+            {props.children} {/*컨테인먼트를 위해 끝부분에 props.children 사용, 이를 통해 하위 컴포넌트가 다이얼로그 하단에 렌더링된다*/}
+        </FancyBorder>
+    );
+}
+
+function SignUpDialog(props) {
+    const [nickname, setNickname] = useState('');
+
+    const handleChange = (event) => {
+        setNickname(event.target.value);
+    }
+
+    const handleSignUp = () => {
+        alert(`어서 오세요, ${nickname}님!`);
+    }
+
+    return (
+        <Dialog
+            title="화성 탐사 프로그램"          {/*Specialization specialization 을 위한 props 인 title에 메세지 값을 넣어준다*/}
+            message="닉네임을 입력해 주세요.">   {/*Specialization*/}
+            <input                              {/*Input 과 Button 태그는 props.children 으로 전달됨*/}
+                value={nickname}
+                onChange={handleChange} />
+            <button onClick={handleSignUp}>
+                가입하기
+            </button>
+        </Dialog>
+    );
+}
+```
+
+## Inheritance
+- Composition과 대비되는 개념
+- 다른 컴포넌트로부터 상속을 받아서 새로운 컴포넌트를 만드는 것
+- 리액트에서는 상속을 사용하여 컴포넌트를 만드는 것보다 컴포지션을 사용하는 개발하는 것이 더 좋은 방법 
+  (메타에서 상속을 사용하여 컴포넌트를 만드는 것을 추천할 만한 사용 사례를 찾지 못함)
+
+## 결론
+- 복잡한 컴포넌트를 쪼개서 여러 개의 컴포넌트를 만들고, 만든 컴포넌트들을 조합해서 새로운 컴포넌트를 만드는 것이 좋은 방법
+
+# Context
+- chapter_14 참고 (Context를 사용하여 테마 변경 기능 만들기)
+
+<img src="./images/chapter_14_devTool.png" style="width:570px;"/>
+
+- 기존의 일반적인 React 애플리케이션에서는 데이터가 컴포넌트의 프롭스를 통해 부모에서 자식으로 단방향 전달
+- 하지만 여러 컴포넌트에 걸쳐 자주 사용되는 데이터의 경우에는 위와 같은 방식을 사용하면 복잡하고 불편함
+- 그래서 나오게 된 것이 컨텍스트
+- 리액트 컴포넌트들 사이에서 데이터를 기존의 프롭스를 통해 전달하는 방식 대신 컴포넌트 트리를 통해 곧바로 컴포넌트로 전달
+- 이를 통해 어떤 컴포넌트든지 데이터에 쉽게 접근할 수 있다
+- 데이터를 한 곳에서 관리하기 때문에 디버깅을 하기에도 유리하다
+
+- props drilling : 상위 컴포넌트에서 하위 컴포넌트로 props 객체를 통해 전달
+- state lifting  : 함수를 통해 하위 컴포넌트의 데이터를 상위 컴포넌트로 전달받아서 사용
+</br>
+가장 하위 컴포넌트에 데이터를 전달하려면 3번 props 를 타고 하위 컴포넌트로 내려가야 함
+</br>
+<img src="./images/nHrm3ELEIx.avif" style="width:570px;"/>
+
+[출처] : https://rahulreddy.hashnode.dev/avoid-prop-drilling-with-react-context
+
+```javascript
+// 기존 방식을 사용하여 컴포넌트의 props 로 전달하는 예제
+// 실제 데이터를 필요로 하는 컴포넌트까지의 깊이가 깊어질수록 복잡하다
+function App(props) {
+    return <Toolbar theme="dark" />;
+}
+
+function Toolbar(props) {
+    // 이 Toolbar 컴포넌트는 ThemedButton에 theme를 넘겨주기 위해서 'theme' props을 가져야만 한다
+    // 현재 테마를 알아야 하는 모든 버튼에 대해서 props로 전달하는 것은 굉장히 비효율적이다
+    return (
+        <div>
+            <ThemedButton theme={props.theme} />
+        </div>
+    );
+}
+
+function ThemedButton(props) {
+    return <Button theme={props.theme} />;
+}
+```
+
+
+- 컨텍스트를 사용해야 할 때
+    - 여러 개의 Component들이 접근해야 하는 데이터 예
+        - 로그인 여부, 로그인 정보, UI 테마, 현재 언어
+
+```javascript
+// 컨텍스트를 사용하여 위와 동일한 코드 구현하면
+
+// 컨텍스트는 데이터를 매번 컴포넌트를 통해 전달할 필요 없이 컴포넌트 트리로 곧바로 전달하게 해줍니다.
+// 여기에서는 현재 테마를 위한 컨텍스트를 생성하며, 기본값은 'light' 입니다.
+const ThemeContext = React.createContext('light');
+
+// Provider 를 사용하여 하위 컴포넌트들에게 현재 테마 데이터를 전달한다.
+// 모든 하위 컴포넌트들은 컴포넌트 트리 하단에 얼마나 같이 있는지에 관계없이 데이터를 읽을 수 있다.
+// 여기에서는 현재 테마값으로 'dark'를 전달하고 있다.
+function App(props) {
+    return (
+        <ThemeContext.Provider value="dark">
+            <Toolbar />
+        </ThemeContext.Provider>
+    );
+}
+
+// 이제 중간에 위치한 컴포넌트는 테마 데이터를 하위 컴포넌트로 전달할 필요가 없다
+function Toolbar(props) {
+    return (
+        <div>
+            <ThemedButton />
+        </div>
+    );
+}
+
+function ThemedButton(props) {
+    // 리액트는 가장 가까운 상위 테마 Provider를 찾아서 해당되는 값을 사용한다
+    // 만약 해당되는 Provider가 없을 경우 기본값(여기에서는 'light')을 사용한다
+    // 여기에서는 상위 Provider가 있기 때문에 현재 테마의 값은 'dark'가 된다
+    return (
+        <ThemedContext.Consumer>
+            {value => <Buttoon theme={value} />}
+        </ThemedContext.Consumer>
+    );
+}
+```
+
+## Context를 사용하기 전에 고려할 점
+- Context 는 다른 레벨의 많은 컴포넌트가 특정 데이터를 필요로 하는 경우에 주로 사용
+- 그러나 컴포넌트와 Context가 연동되면 재사용성이 떨어지기 때문에 무조건 Context 를 사용하는 것은 좋은 것이 아니다
+- 다른 레벨의 여러 컴포넌트가 데이터를 필요로 하는 것이 아니라면 기존처럼 props 를 통해 데이터를 전달하는 것이 좋다
+
+```javascript
+// 가장 하위의 아바타 컴포넌트가 user 와 avatarSize 를 필요로 하기 때문에 여러 단계에 걸쳐서 props 를 통해 전달 해야 하고 
+// 아바타 컴포넌트에 추가적인 데이터가 필요해지면 해당 데이터도 추가로 여러 단계에 걸쳐 전달 해주어야 한다
+// 컨텍스트를 사용하지 않고 이러한 문제를 해결할 수 있는 한가지 방법은 아바타 컴포넌트를 변수에 저장하여 직접 넘겨주는 것
+
+// Page 컴포넌트는 PageLayout 컴포넌트를 렌더링
+<Page user={user} avatarSize={avatarSize} />
+
+// PageLayout 컴포넌트는 NavigationBar 컴포넌트를 렌더링
+<PageLayout user={user} avatarSize={avatarSize} />
+
+// NavigationBar 컴포넌트는 Link 컴포넌트를 렌더링
+<NavigationBar user={user} avatarSize={avatarSize} />
+
+// Link 컴포넌트는 Avatar 컴포넌트를 렌더링
+<Avatar user={user} avatarSize={avatarSize} />
+```
+
+```javascript
+// 컨텍스트를 사용하지 않고 이러한 문제를 해결할 수 있는 한가지 방법은 element variable 형태로 아바타 컴포넌트를 변수에 저장하여 직접 넘겨주는 것
+// 중간 단계에 있는 컴포넌트들은 user 와 avatarSize 정보를 몰라도 됨
+// userLink 변수에 저장해서 이 변수를 하위 컴포넌트에 전달
+// 상위 레벨에 있는 페이지 컴포넌트만 아바타 컴포넌트에서 필요로 하는 user 와 avatarSize 를 알고 있으면 된다
+// 대신 데이터가 많아질수록 상위 컴포넌트에 몰리기 때문에 상위 컴포넌트는 점점 복잡해지고 하위 컴포넌트는 너무 유연해질 수 있다
+
+function Page(props) {
+    const user = props.user;
+
+    const userLink = (
+        <Link href={user.permalink}>
+            <Avatar user={user} size={props.avatarSize} />
+        </Link>
+    );
+
+    // Page 컴포넌트는 PageLayout 컴포넌트를 렌더링
+    // 이떄 props로 userLink를 함께 전달
+    return <PageLayout userLink={userLink} />;
+}
+
+// PageLayout 컴포넌트는 NavigationBar 컴포넌트를 렌더링
+<PageLayout userLink={...} />
+
+// NavigationBar 컴포넌트는 props로 전달받은 userLink element를 리턴
+<NavagationBar userLink={...} />
+```
+```javascript
+// 하위 컴포넌트를 여러 개의 변수로 나눠서 전달하는 방법
+// 하위 컴포넌트의 의존성을 상위 컴포넌트와 분리할 필요가 있는 경우에 적합하다
+// 또는 렌더링 전에 하위 컴포넌트가 상위 컴포넌트와 통신해야 하는 경우 render props를 사용하여 처리할 수 있다
+// 하지만 어떤 경우에는 하나의 데이터에 다양한 레빌에 있는 중첩된 컴포넌트들이 접근할 필요가 있는 경우 이 방식을 사용할 수 없고 Context를 사용해야 한다
+function Page(props) {
+    const user = props.user;
+
+    const topBar = (
+        <NavigationBar>
+            <Link href={user.permalink}>
+                <Avatar user={user} size={props.avatarSize} />
+            </Link>
+        </NavigationBar>
+    );
+    const content = <Feed user={user} />;
+
+    return (
+        <PageLayout
+            topBar={topBar}
+            content={content}
+        />
+    );
+}
+```
+
+## Context API
+
+### Context.Provider
+```javascript
+// Context 생성하는 방법
+// 함수 파라미터에 기본값을 넣어준다
+// 기본값으로 undefined를 넣으면 기본값이 사용되지 않는다
+const MyContext = React.createContext(기본값); 
+
+// 리액트에서 렌더링이 일어날 때 컨텍스트 객체를 구독하는 하위 컴포넌트가 나오면
+// 현재 컨텍스트의 값을 가장 가까이에 있는 상위 레벨의 프로바이더로부터 받아온다.
+// 상위 레벨에 매칭되는 프로바이더가 없다면 이 경우에만 기본값이 사용된다
+```
+
+```javascript
+// Context.Provider 컴포넌트로 하위 컴포넌트들을 감싸주면 모든 하위 컴포넌트들이 해당 컨텍스트 데이터에 접근할 수 있다 
+<MyContext.Provider value={/* some value*/}
+// Context 의 value 라는 props 에 담으면 하위 컴포넌트에 전달된다
+// 하위 컴포넌트가 데이터를 소비한다는 의미에서 컨슈밍 컴포넌트라고 부른다
+// 컨슈밍 컴포넌트는 컨텍스트 값을 변화를 지켜보다가 값이 변경되면 재렌더링 된다
+```
+
+```javascript
+// Provider 컴포넌트가 재렌더링될 때마다 모든 하위 consumer 컴포넌트가 재렌더링 됨
+function App(props) {
+    // value props 를 위한 객체가 매번 새롭게 생성되면 하위 consumer 컴포넌트가 재렌더링
+    // 이를 방지하려면 value 를 직접 넣는 것이 아닌 컴포넌트의 state로 옮기고 불필요한 재렌더링을 막아야 한다
+    return (
+        <MyContext.Provider value={{ something: 'something' }}>
+            <Toolbar />
+        </MyContext.Provider>
+    );
+}
+
+// state를 사용하는 예
+function App(props) {
+    const [value, setValue] = useState({ something: 'something'});
+
+    return (
+        <MyContext.Provider value={value}>
+            <Toolbar />
+        </MyContext.provider>
+    );
+}
+```
+
+### Class.contextType
+- 클래스 컴포넌트에서 context 사용하기
+- class.contextType 프로바이더 하위에 있는 class 컴포넌트에서 context 의 데이터에 접근하기 위해서 사용하는 것
+- 현재는 거의 사용하지 않음
+
+```javascript
+// MyClass 라는 클래스 컴포넌트는 MyContext의 데이터에 접근할 수 있게 된다
+// 클래스 컴포넌트에 있는 contextType 속성에는 react.createContext 함수를 통해 생성된 context 객체가 대입될 수 있다
+// 이 속성을 사용하면 this.context 를 통해 상위에 있는 Provider 중에서 가장 가까운 것의 값을 가져올 수 있다
+// 이 API 를 사용하면 단 하나의 컨텍스트만을 구독할 수 있다
+class MyClass extends React.Component {
+    componentDidMount() {
+        let value = this.context;
+        /* MyContext 의 값을 이용하여 원하는 작업을 수행 가능 */
+    }
+    componentDidUpdate() {
+        let value = this.context;
+        /* ... */
+    }
+    componentWillUnmount() {
+        let value = this.context;
+        /* ... */
+    }
+    reuder () {
+        let value = this.context;
+        /* MyContext의 값에 따라서 컴포넌트들을 렌더링 */
+    }
+}
+MyClass.contextType = MyContext;
+```
+
+### Context.Consumer
+- 컨슈머 컴포넌트는 컨텍스트의 데이터를 구독하는 컴포넌트이다
+- 컴포넌트의 자식으로 함수가 올 수 있는데 이것을 function as child 라고 한다
+- function as child : 컴포넌트의 자식으로 함수를 사용하는 방법
+- Context.Consumer 로 감싸주면 자식으로 들어간 함수가 현재 컨텍스트의 value를 받아서 react node 로 리턴하게 된다
+```javascript
+<MyContext.Consumer>
+    {value => /* 컨텍스트의 값에 따라서 컴포넌트들을 렌더링 */}
+</MyContext.Consumer>
+```
+
+- function as child 를 사용하는 방법
+```javascript
+// children 이라는 props 를 직접 선언하는 방식
+<Profile children={name => <p>이름: {name}</p>} />
+
+// Profile 컴포넌트로 감싸서 children 으로 만드는 방식
+<Profile>{name => <p>이름: {name}</p></Profile>
+```
+
+### Context.displayName
+- Context 객체는 displayName 이라는 문자열 속성을 갖는다
+```javascript
+const MyContext = React.createContext(/* some value*/);
+MyContext.displayName = 'MyDisplayName';
+
+// 개발자 도구에 "MyDisplayName.Provider" 로 표시됨
+<MyContext.Provider>
+
+// 개발자 도구에 "MyDisplayName.Consumer" 로 표시됨
+<MyContext.Cunsumer>
+```
+
+### 여러 개의 Context 사용하기
+- 클래스 컴포넌트에서 Class.contextType 을 사용하면 한 번에 하나의 컨텍스트만 사용할 수 있는데
+- 여러 개의 컨텍스트를 동시에 사용하려면 Context.Provider 를 중첩해서 사용하는 방식으로 구현할 수 있다
+
+```javascript
+// 두 개의 Context
+// 테마를 위한 컨텍스트
+const ThemeContext = React.createContext('light');
+
+// 로그인 한 사용자를 위한 컨텍스트
+const UserContext = React.creactContext({
+    name: 'Guest',
+});
+
+// App 컴포넌트에서는 각 컨텍스트에 대해 2개의 프로바이더를 사용하여 자식 컴포넌트인 레이아웃으로 감싸준다
+class App extends React.Component {
+    render() {
+        const { signedInUser, theme } = this.props;
+
+        // App component that provides initial context values
+        return (
+            <ThemeContext.Provider value={theme}>
+                <UserContext.Provider value={signedIUser}>
+                    <Layout />
+                </UserContext.Provider>
+            </ThemeContext.provider>
+        );
+    }
+}
+
+function Layout() {
+    return (
+        <div>
+            <Sidebar />
+            <Content />
+        </div>
+    );
+}
+
+// 실제 컨텍스트의 데이터를 사용하는 Content 컴포넌트에서는 2개의 컨슈머 컴포넌트를 사용하여 전달
+function Content() {
+    return (
+        <ThemeContext.Consumer>
+            {theme => {
+                <UserContext.Consumer>
+                    {user => {
+                        <ProfilePage user={user} theme={theme} />
+                    }}
+                </UserContext.Consumer>
+            }}
+        </ThemeContext.Consumer>
+    );
+}
+```
+
+### useContext()
+- 함수 컴포넌트에서 컨택스트를 사용하기 위해 컴포넌트를 매번 컨슈머 컴포넌트로 감싸주는 것보다 훅을 사용하는 것이 좋다
+- useContextHook 은 함수 컴포넌트에서 컨텍스트를 쉽게 사용할 수 있게 해준다
+```javascript
+// useContext() Hook 을 사용한 예시
+// react.createContext 함수 호출로 생성된 컨텍스트 객체를 인자로 받아서
+// 현재 컨텍스트 값을 리턴한다
+// useContextHook 을 사용하면 컨텍스트의 값을 다른 방식과 동일하게 컴포넌트 트리상에서 가장 가까운 상위 프로바이더로부터 받아오게 된다
+// 컨텍스트의 값이 변경되면 변경된 값과 함께 useContextHook 을 사용하는 컴포넌트가 재렌더링 된다
+function MyConponent(props) {
+    const value = useContext(MyContext);
+
+    return (
+        ...
+    )
+}
+```
+
+```javascript
+
+// useContextHook 을 사용할 때에는 파라미터로 context 객체를 넣어줘야 한다
+
+// 올바른 사용법
+useContext(MyContext);
+
+// 잘못된 사용법
+useContext(MyContext.Consumer);
+useContext(MyContext.Provider);
+```
