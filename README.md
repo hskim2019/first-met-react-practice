@@ -1,75 +1,3 @@
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-
-
 ***
 [처음만난 리액트](https://github.com/soaple/first-met-react-practice-v18) 강의를 들으면서 메모한 내용입니다.
 ***
@@ -1307,3 +1235,363 @@ useContext(MyContext);
 useContext(MyContext.Consumer);
 useContext(MyContext.Provider);
 ```
+
+# Styling
+- chapter_15 참고 (styled-components를 사용하여 스타일링)
+
+## universal selector
+```css
+/*모든 엘리먼트에 적용*/
+* {
+    font-size: 20px;
+    color: blue;
+}
+```
+
+## Grouping selector
+```css
+h1, h2, p {
+    color: black;
+    text-aligh: center;
+}
+```
+
+## Element의 상태와 관련된 selector
+- :hover
+    - 마우스 커서가 element 위에 올라왔을 때
+- :active
+    - 주로 <a>태그 (link)에 사용되는데, element 가 클릭됐을 때를 의미
+- :focus
+    - 주로 <input> 태그에서 사용되는데, element가 초점을 갖고 있을 경우를 의미
+- :checked
+    - radio button 이나 checkbox 같은 유형의 <input> 태그가 체크되어 있는 경우를 의미
+- :first-child, :last-child
+    - 상위 element 를 기준으로 각각 첫 번쨰 child, 마지막 child일 경우를 의미
+
+```css
+button:hover {
+    ...
+}
+a:active {
+    ...
+}
+input:focus {
+    ...
+}
+option:checked {
+    ...
+}
+p:first-child {
+    ...
+}
+p:last-child {
+
+}
+```
+
+## styled-components
+
+- styled-components 설치하기
+    - (styled-components 패키지와 최신 node 패키지가 버전 호환이 되지 않아 vscode-styled-components 를 마켓플레이스에서 설치하였음)
+```cmd
+#npm을 사용하는 경우
+> npm install --save styled-components
+
+#year을 사용하는 경우
+> yarn add styled-components
+```
+
+- css 문법을 그대로 사용하면서 결과물을 스타일링된 컴포넌트 형태로 만들어주는 오픈소스 라이브러리
+- Tagged template literal을 사용하여 css 속성이 적용된 React 컴포넌트를 만든다
+    - 아래 Tagged template literal 설명 참고
+- Styled 컴포넌트를 사용하는 기본적인 방법은 backtikcs 로 둘러싸인 문자열 부분에 css 속성을 넣고 태그함수 위치에 styled.html 태그 형태로 사용
+```javascript
+import React from "react";
+import styled from "styled-components";
+
+const Wrapper = styled.div`
+    padding: 1em;
+    background: grey;
+`;
+```
+
+- styled-components의 props 사용하기
+    - 조건이나 동적으로 변하는 값을 사용해서 스타일링하기
+```javascript
+import React from "react";
+import styled from "styled-components";
+
+const Button = styled.button`
+    color: ${props => props.dark ? "white" : "dark"};
+    background: ${props => props.dark ? "black" : "white"};
+    border: 1px solid black;
+`;
+
+function Sample(props) {
+    return (
+        <div>
+            <Button>Normal</Button>
+            <Button dark>Dark</Button> {/* props 를 dark 로 넣어주었음 props 는 그대로 styled 컴포넌트로 전달된다*/}
+        </div>
+    );
+}
+
+export default Sample
+```
+
+- styled-components 의 스타일 확장하기
+
+```javascript
+import React from "react";
+import styled from 'styled-components';
+
+// Button 컴포넌트
+// HTML 버튼 태그를 기반으로 만들어진 단순한 버튼
+const Button = styled.button`
+    color: grey;
+    border: 2px solid paleviolered;
+`;
+
+// Button에 style이 추가된 RoundedButton 컴포넌트
+// 여기에서는 HTML 태그가 빠져있고 컴포넌트가 괄호로 둘러싸인 채로 들어가있다, 이것이 다른 컴포넌트의 스타일을 확장해서 사용하는 부분
+// 이 컴포넌트는 버튼 컴포넌트의 모서리를 둥글게 만든 컴포넌트이다
+const RounedButton = styled(Button)`
+    border-radious: 16px;
+`;
+
+function Sample(props) {
+    return (
+        <div>
+            <Button>Normal</Button>
+            <RoundedButton>Rounded</RoundedButton>
+        </div>
+    );
+}
+```
+
+### tagged template literal
+- 스타일 컴포넌트는 tagged template literal을 사용하여 구성요소의 스타일을 지정
+- literal : 소스 코드에 고정된 값을 의미 (대입 연산자 오른쪽에 있는 값)
+
+```javascript
+let number = 20; // 20이 literal
+
+// 정수 리터럴 (Integer literal)
+const myNumber = 10;
+
+// 문자열 리터럴 (String literal)
+const myStr = 'Hello';
+
+// 배열 리터럴 (Array literal)
+const myArray = [];
+
+// 객체 리터럴 (Object literal)
+const myObject = {};
+```
+
+- template literal : 리터럴을 템플릿 형태로 사용하는 자바스크립트의 문법, 역다운표(backtick) 를 사용하여 문자열을 작성하고, 그 안에 대체 가능한 익스프레스를 넣는 방법
+    - Untagged template literal 과 Tagged template literal
+```javascript
+// Untagged template literal
+// 단순한 문자열
+`string text`
+
+// 여러 줄(Multi-line)에 걸친 문자열
+`string text line 1
+ string text line 2`
+
+ // 대체 가능한 expression이 들어있는 문자열
+ `string text ${expression} string text`
+
+ // Tagged template literal
+ // myFunction의 파라미터로 expression으로 구분된 문자열 배열과 expression이 순서대로 들어간 형태로 호출됨
+ // 앞에 나와있는 태그 function을 호출하여 결과를 리턴
+ myFunction`string text ${expression} string text`;
+```
+
+```javascript
+// Tagged template literal 예
+const name = '홍길동';
+const region = '서울';
+
+function myTagFunction(strings, nameExp, regionExp) {
+    let str- = strings[0]; // "제 이름은 "
+    let str1 = strings[1]; // "이고, 사는 곳은 "
+    let str2 = strings[2]; // "입니다."
+
+    // 여기에서도 tempalte literal을 사용하여 리턴할 수 있음
+    return `${str0}${nameExp}${str1}${regionExp}${str2}`;
+}
+
+const output = myTagFunction`제 이름은 ${name}이고, 사는 곳은 ${region}입니다.`;
+
+// 출력 결과
+// 제 이름은 홍길동이고, 사는 곳은 서울입니다.
+console.log(output);
+```
+
+# Mini Project
+[프로젝트](https://github.com/hskim2019/first-met-react-practice-mini-blog)
+- 프로젝트 생성
+```
+-- 프로젝트 생성
+> npx create-react-app mini-blog
+```
+
+- 라이브러리 추가
+```
+-- react-router-dom 설치 : 리액트 앱에서 페이지 전환을 위해 사용하는 패키지
+-- styled-components 설치 : 스타일링을 위한 library
+-- package.json 파일이 관리하는 의존성 목록에 저장하겠다는 의미
+> npm install --save react-router-dom styled-components
+```
+
+```json
+// 설치 후 package.json 파일에 아래와 같이 dependencies 에 추가됨
+// 이렇게 한 번 dependencies 에 추가되면 다음 사용자가 패키지들이 필요한지 일일히 확인해서 설치할 필요 없이 그냥 npm install 명령어만 실행하면 된다
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.22.3",
+    "react-scripts": "5.0.1",
+    "styled-components": "^6.1.8",
+    "web-vitals": "^2.1.4"
+  },
+```
+- react-router-dom 을 이용한 라우팅 구성 예시
+    - 브라우저 라우터 컴포넌트는 웹브라우저에서 React 라우터를 사용하여 라우팅을 할 수 있도록 해주는 컴포넌트
+    - 웹 브라우저에 히스토리라는 기능이 내장되어 있는데 여기에는 사용자가 탐색한 페이지들의 방문 기록이 저장된다
+    - 브라우저 라우트 컴포넌트는 이 히스토리를 이용해서 경로를 탐색할 수 있게 해주는 컴포넌트
+```javascript
+// /places 로 접속하면 place-page 컴포넌트가 렌더링
+<BrowserRouter>
+    <Routes>
+        <Route index element={<MainPage />} />
+        <Route path="places" element={<PlacePage />} />
+        <Route path="games" element={<GamePage />} />
+    </Route>
+</BrowserRouter>
+```
+
+- useNavigate()
+    - react-router-dom 에서는 페이지 이동을 위한 useNavigate라는 훅을 제공한다
+
+```javascript
+function SampleNavigate(props) {
+    const navigate = useNavigate();
+
+    const moveToMain = () => {
+        navigate("/");
+    }
+
+    return (
+        ...
+    );
+}
+```
+
+- 미니 블로그에 필요한 기능
+    - 글 목록 보기 기능(리스트)
+        - PostList, PostListItem
+    - 글 보기 기능
+        - Post
+    - 댓글 보기 기능
+        - CommentList, CommentListItem
+    - 글 작성 기능
+        - PostWrite
+    - 댓글 작성 기능
+        - CommentWrite
+
+- 폴더구조
+    - src
+        - component
+            - list
+            - page
+            - ui : 버튼, 텍스트 등 사용자가 직접 입력할 수 있게 해주는 컴포넌트
+
+- 라우팅
+    - App.js 파일에 포함되어 있는 app 컴포넌트가 가장 처음으로 렌더링 되는 컴포넌트이기 때문에 여기에 구현한다
+    - 리액트는 기본적으로 index.js 파일을 렌더링하게 되어 있어서 여기에 처음으로 렌더링 할 컴포넌트를 지정해줄 수 있다
+
+- 빌드
+    - npm run build 실행 시 build 폴더가 생성되고 javascript bundle 파일 등이 static 아래에 들어간다
+
+- 서버 설치 (static 파일을 서빙해주는 역할)
+    - npm install -g serve
+    - srv -s build (가 오류가 발생하여 npx serve -s build 실행)
+        (npx : 패키지를 설치하지 않고도 npm 레지스트리에서 원하는 패키지를 실행(Excute) 할 수 있다.)
+
+
+# Getting Started with Create React App
+
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+## Available Scripts
+
+In the project directory, you can run:
+
+### `npm start`
+
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
+
+### `npm test`
+
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+
+### `npm run build`
+
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
+
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
+
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+### `npm run eject`
+
+**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+
+If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+
+You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+
+## Learn More
+
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+
+To learn React, check out the [React documentation](https://reactjs.org/).
+
+### Code Splitting
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+
+### Analyzing the Bundle Size
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+
+### Making a Progressive Web App
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+
+### Advanced Configuration
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+
+### Deployment
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+
+### `npm run build` fails to minify
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)

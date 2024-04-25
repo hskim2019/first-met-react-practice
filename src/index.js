@@ -124,11 +124,20 @@ import reportWebVitals from './reportWebVitals';
 // )
 
 
-import DarkOrLight from './chapter_14/DarkOrLight';
+// import DarkOrLight from './chapter_14/DarkOrLight';
+// const root = ReactDOM.createRoot(document.getElementById('root'));
+// root.render(
+//       <React.StrictMode>
+//             <DarkOrLight />
+//       </React.StrictMode>
+// )
+
+
+import Blocks from './chapter_15/Blocks';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
       <React.StrictMode>
-            <DarkOrLight />
+            <Blocks/>
       </React.StrictMode>
 )
 
